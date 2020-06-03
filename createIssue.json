@@ -1,0 +1,6 @@
+mutation MyMutation {
+  __typename
+  createIssue(input: {repositoryId: "MDEwOlJlcG9zaXRvcnkyNjkwNDA2MDA=", title: "test"}) {
+    clientMutationId
+  }
+}
