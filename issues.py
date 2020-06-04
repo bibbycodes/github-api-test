@@ -16,20 +16,21 @@ query = """query {
     }
 }"""
 
-issue_query = """mutation {
+create_issue_mutation_string = """mutation {
     __typename
-    createIssue(input: {repositoryId: "MDEwOlJlcG9zaXRvcnkyNjkwNDA2MDA=", title: "this is a test issue creation"}) {
+    createIssue(input: {repositoryId: "MDEwOlJlcG9zaXRvcnkyNjkwNDA2MDA=", title: "Splunk UF - New Version Available", body: "this is a test body"}) {
     clientMutationId
     }
 }"""
 
-issue_list_query = """query {
+issue_list_query_string = """query {
     repository(owner: "bibbycodes", name: "github-api-test") {
-    issues(first: 10) {
+    issues(first: 100) {
       edges {
         node {
           body
           title
+          state
         }
       }
     }
@@ -38,8 +39,12 @@ issue_list_query = """query {
 
 url = 'https://api.github.com/graphql'
 
-r = requests.post(url, json={'query' : issue_query}, headers={"Authorization": "Bearer {}".format(github_key)})
-print(r.text)
+response = requests.post(url, json={'query' : issue_list_query_string}, headers={"Authorization": "Bearer {}".format(github_key)})
+response_dict = json.loads(response.text)
+issues = response_dict['data']['repository']['issues']['edges']
 
-query_list = requests.post(url, json={'query' : issue_list_query}, headers={"Authorization": "Bearer {}".format(github_key)})
-print(query_list.text)
+for item in issues:
+    issue = item['node']
+    if issue['state'] == "OPEN":
+        print(issue)
+
