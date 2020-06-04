@@ -23,7 +23,23 @@ issue_query = """mutation {
     }
 }"""
 
+issue_list_query = """query {
+    repository(owner: "bibbycodes", name: "github-api-test") {
+    issues(first: 10) {
+      edges {
+        node {
+          body
+          title
+        }
+      }
+    }
+  }
+}"""
+
 url = 'https://api.github.com/graphql'
 
 r = requests.post(url, json={'query' : issue_query}, headers={"Authorization": "Bearer {}".format(github_key)})
 print(r.text)
+
+query_list = requests.post(url, json={'query' : issue_list_query}, headers={"Authorization": "Bearer {}".format(github_key)})
+print(query_list.text)
